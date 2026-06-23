@@ -62,6 +62,7 @@ function setupGate() {
   const gateForm = document.getElementById("gateForm");
   const guestCode = document.getElementById("guestCode");
   const gateError = document.getElementById("gateError");
+  if (!gateForm || !guestCode || !gateError) return;
 
   if (localStorage.getItem("siteUnlocked") === "true") {
     unlockSite();
@@ -83,6 +84,7 @@ function setupGate() {
 function setupNav() {
   const toggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".nav");
+  if (!toggle || !nav) return;
 
   toggle.addEventListener("click", () => {
     const nextState = !nav.classList.contains("is-visible");
@@ -101,6 +103,7 @@ function setupNav() {
 function setupRsvp() {
   const form = document.getElementById("rsvpForm");
   const status = document.getElementById("rsvpStatus");
+  if (!form || !status) return;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -141,6 +144,7 @@ function setupRsvp() {
 
 function renderRegistry() {
   const grid = document.getElementById("registryGrid");
+  if (!grid) return;
   const availableItems = registryItems.filter((item) => !purchased.has(item.id));
 
   if (!availableItems.length) {
@@ -167,7 +171,11 @@ function renderRegistry() {
 }
 
 function setupRegistry() {
-  document.getElementById("registryGrid").addEventListener("click", (event) => {
+  const grid = document.getElementById("registryGrid");
+  const fakePaypal = document.getElementById("fakePaypal");
+  if (!grid || !fakePaypal) return;
+
+  grid.addEventListener("click", (event) => {
     const button = event.target.closest("[data-buy]");
     if (!button) return;
 
@@ -176,7 +184,7 @@ function setupRegistry() {
     renderRegistry();
   });
 
-  document.getElementById("fakePaypal").addEventListener("click", () => {
+  fakePaypal.addEventListener("click", () => {
     alert("PayPal will be connected later. For now, consider the South American Fund spiritually topped up.");
   });
 

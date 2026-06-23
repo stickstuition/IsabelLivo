@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rabbie's Rave | Isabel & Jesse</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="script.js" defer></script>
+    <script src="songs.js" defer></script>
+    <script src="game.js" defer></script>
+  </head>
+  <body>
+    <div class="gate" id="gate"><div class="gate__panel"><p class="eyebrow">Private invitation</p><h1>Isabel & Jesse</h1><form id="gateForm" class="gate__form"><input id="guestCode" type="password" placeholder="Guest code" /><button type="submit">Enter</button></form><p class="gate__error" id="gateError"></p></div></div>
+    <header class="site-header"><a class="brand" href="index.html"><span>I</span><span>&</span><span>J</span></a><button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button><nav class="nav"><a href="index.html">Home</a><a href="story.html">Our Story</a><a href="schedule.html">Schedule</a><a href="travel.html">Travel</a><a href="stay.html">Stay</a><a href="faq.html">FAQ</a><a href="photos.html">Photos</a><a href="rsvp.html">RSVP</a><a href="registry.html">Registry</a><a href="rabbies-rave.html">Rabbie's Rave</a></nav></header>
+    <main>
+      <section class="rave panel page-panel">
+        <div class="rave-shell" data-rave>
+          <div class="rave-view rave-view--active" data-view="menu">
+            <p class="eyebrow">Boutique rhythm mischief</p>
+            <h2>Rabbie's Rave</h2>
+            <img class="rabbie-preview" src="assets/rabbie-frames/up-1.png" alt="" />
+            <div class="rave-actions">
+              <button class="button button--dark" type="button" data-action="show-songs">Play</button>
+              <button class="button button--light" type="button" data-action="show-leaderboard">Leaderboard</button>
+            </div>
+            <p class="rave-status" data-menu-status></p>
+          </div>
+          <div class="rave-view" data-view="songs">
+            <div class="rave-topline"><button class="icon-button" type="button" data-action="show-menu" aria-label="Back to menu"><i data-lucide="arrow-left"></i></button><p class="eyebrow">Choose your chaos</p></div>
+            <h2>Song Select</h2>
+            <div class="song-list" data-song-list></div>
+          </div>
+          <div class="rave-view" data-view="leaderboard">
+            <div class="rave-topline"><button class="icon-button" type="button" data-action="show-menu" aria-label="Back to menu"><i data-lucide="arrow-left"></i></button><p class="eyebrow">Local legends</p></div>
+            <h2>Leaderboard</h2>
+            <ol class="leaderboard-list" data-leaderboard></ol>
+          </div>
+          <div class="rave-view" data-view="game">
+            <div class="rave-hud"><div><span>Song</span><strong data-current-song>Rabbie's Rave</strong></div><div><span>Score</span><strong data-score>0</strong></div></div>
+            <div class="confidence"><span>Confidence</span><div class="confidence__track"><div class="confidence__fill" data-confidence></div></div></div>
+            <div class="playfield" data-playfield>
+              <div class="lane-labels" aria-hidden="true"><span>↑</span><span>↓</span><span>←</span><span>→</span></div>
+              <div class="timing-line" aria-hidden="true"><span>Tap here</span></div>
+              <img class="rabbie" data-rabbie src="assets/rabbie-frames/up-1.png" alt="Rabbie" />
+              <div class="hit-feedback" data-feedback></div>
+            </div>
+            <div class="rave-controls" aria-label="Rhythm controls">
+              <button type="button" data-direction="up" aria-label="Up">↑</button>
+              <button type="button" data-direction="down" aria-label="Down">↓</button>
+              <button type="button" data-direction="left" aria-label="Left">←</button>
+              <button type="button" data-direction="right" aria-label="Right">→</button>
+            </div>
+            <button class="button button--light quit-button" type="button" data-action="end-run">Quit</button>
+          </div>
+          <div class="rave-view" data-view="result">
+            <p class="eyebrow" data-result-kicker>Run complete</p>
+            <h2 data-final-score>0</h2>
+            <p data-result-copy>Rabbie awaits judgment.</p>
+            <form class="score-form" data-score-form><label>Your name<input name="player" maxlength="24" required placeholder="Wedding legend" /></label><button class="button button--dark" type="submit">Save Score</button></form>
+            <div class="rave-actions"><button class="button button--light" type="button" data-action="show-songs">Play Again</button><button class="button button--light" type="button" data-action="show-leaderboard">Leaderboard</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

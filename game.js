@@ -1,34 +1,23 @@
 const RAVE_CONFIG = {
-  // Sprite values crop the uploaded 4-row by 3-frame sheet without editing the source image.
-  sprite: {
-    path: "assets/rabbie-sprite.png",
-    sheetWidth: 1536,
-    sheetHeight: 1024,
-    displayScale: 0.5,
-    cropWidth: 190,
-    cropHeight: 190,
-    rowByDirection: { up: 0, down: 1, left: 2, right: 3 },
-    frameCentersX: [512, 768, 1088],
-    rowCentersY: [128, 384, 640, 896],
-    frameDurationMs: 90,
+  frames: {
+    basePath: "assets/rabbie-frames",
+    defaultDirection: "up",
+    frameMs: 85,
   },
-  // Note generation is live: loud audio lowers the spawn interval and adds occasional doubles.
   notes: {
-    travelMs: 1850,
-    baseSpawnMs: 760,
-    loudSpawnMs: 310,
-    quietThreshold: 0.08,
-    loudThreshold: 0.26,
+    travelMs: 1750,
+    baseSpawnMs: 720,
+    loudSpawnMs: 330,
+    quietThreshold: 0.06,
+    loudThreshold: 0.24,
     missAfterMs: 210,
   },
-  // Timing windows are in milliseconds. Loud sections tighten these slightly.
   timing: {
     perfectMs: 70,
     goodMs: 125,
     poorMs: 190,
-    loudTightenMs: 22,
+    loudTightenMs: 20,
   },
-  // Confidence reaches zero when Rabbie has had enough and the run ends immediately.
   confidence: {
     start: 100,
     perfect: 2,
@@ -37,17 +26,16 @@ const RAVE_CONFIG = {
     bad: -12,
     miss: -15,
   },
-  // Score values for each timing band.
   scoring: {
     perfect: 300,
     good: 170,
     poor: 70,
     bad: 20,
   },
-  demoModeMs: 60000,
 };
 
 const DIRECTIONS = ["up", "down", "left", "right"];
+const SYMBOLS = { up: "↑", down: "↓", left: "←", right: "→" };
 const LEADERBOARD_KEY = "rabbiesRaveLeaderboard";
 
 class RabbiesRave {
@@ -66,6 +54,7 @@ class RabbiesRave {
     this.resultCopy = root.querySelector("[data-result-copy]");
     this.resultKicker = root.querySelector("[data-result-kicker]");
     this.scoreForm = root.querySelector("[data-score-form]");
+    this.menuStatus = root.querySelector("[data-menu-status]");
 
     this.songs = window.RABBIES_RAVE_SONGS || [];
     this.notes = [];
@@ -80,22 +69,22 @@ class RabbiesRave {
     this.analyser = null;
     this.sourceNode = null;
     this.frequencyData = null;
+    this.lastAmplitude = 0;
 
     this.renderSongs();
     this.renderLeaderboard();
-    this.applySpriteFrame("up", 0);
+    this.setRabbieFrame("up", 1);
     this.bindEvents();
   }
 
   bindEvents() {
     this.root.addEventListener("click", (event) => {
-      const actionButton = event.target.closest("[data-action]");
-      const songButton = event.target.closest("[data-song]");
-      const directionButton = event.target.closest("[data-direction]");
-
-      if (actionButton) this.handleAction(actionButton.dataset.action);
-      if (songButton) this.startSong(songButton.dataset.song);
-      if (directionButton) this.hit(directionButton.dataset.direction);
+      const action = event.target.closest("[data-action]")?.dataset.action;
+      const songId = event.target.closest("[data-song]")?.dataset.song;
+      const direction = event.target.closest("[data-direction]")?.dataset.direction;
+      if (action) this.handleAction(action);
+      if (songId) this.startSong(songId);
+      if (direction) this.hit(direction);
     });
 
     this.root.querySelectorAll("[data-direction]").forEach((button) => {
@@ -106,38 +95,34 @@ class RabbiesRave {
     });
 
     document.addEventListener("keydown", (event) => {
-      const directionByKey = {
+      const direction = {
         ArrowUp: "up",
         ArrowDown: "down",
         ArrowLeft: "left",
         ArrowRight: "right",
-      };
-      if (!directionByKey[event.key] || !this.running) return;
+      }[event.key];
+      if (!direction || !this.running) return;
       event.preventDefault();
-      this.hit(directionByKey[event.key]);
+      this.hit(direction);
     });
 
     this.scoreForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const formData = new FormData(this.scoreForm);
-      this.saveScore(formData.get("player"));
+      const name = new FormData(this.scoreForm).get("player");
+      this.saveScore(name);
       this.scoreForm.reset();
       this.showView("leaderboard");
     });
   }
 
   handleAction(action) {
-    const actionMap = {
-      "show-menu": () => this.showView("menu"),
-      "show-songs": () => this.showView("songs"),
-      "show-leaderboard": () => {
-        this.renderLeaderboard();
-        this.showView("leaderboard");
-      },
-      "end-run": () => this.endRun("Run ended", false),
-    };
-
-    actionMap[action]?.();
+    if (action === "show-menu") this.showView("menu");
+    if (action === "show-songs") this.showView("songs");
+    if (action === "show-leaderboard") {
+      this.renderLeaderboard();
+      this.showView("leaderboard");
+    }
+    if (action === "end-run") this.endRun("Run ended", false);
   }
 
   showView(name) {
@@ -147,17 +132,13 @@ class RabbiesRave {
   }
 
   renderSongs() {
-    this.songList.innerHTML = this.songs
-      .map(
-        (song) => `
-          <button class="song-card" type="button" data-song="${song.id}">
-            <strong>${song.title}</strong>
-            <span>${song.artist}</span>
-            <small>${song.file}</small>
-          </button>
-        `,
-      )
-      .join("");
+    this.songList.innerHTML = this.songs.map((song) => `
+      <button class="song-card" type="button" data-song="${song.id}">
+        <strong>${song.title}</strong>
+        <span>${song.artist}</span>
+        <small>${song.file}</small>
+      </button>
+    `).join("");
   }
 
   async startSong(songId) {
@@ -165,19 +146,24 @@ class RabbiesRave {
     if (!this.currentSong) return;
 
     this.resetRun();
-    this.songEl.textContent = `${this.currentSong.title} - ${this.currentSong.artist}`;
     this.showView("game");
-    this.startedAt = performance.now();
-    this.running = true;
+    this.songEl.textContent = `${this.currentSong.title} - ${this.currentSong.artist}`;
+    this.showFeedback("Loading", "okay");
 
     try {
-      await this.setupAudio(this.currentSong.file);
-    } catch {
+      await this.prepareAudio(this.currentSong.file);
+      await this.audio.play();
+      this.running = true;
+      this.startedAt = performance.now();
+      this.lastSpawnAt = this.startedAt - 500;
+      requestAnimationFrame((time) => this.loop(time));
+    } catch (error) {
+      this.showFeedback("Audio failed", "bad");
+      this.menuStatus.textContent = `Could not play ${this.currentSong.title}. Check the audio path in songs.js.`;
+      this.showView("songs");
       this.stopAudio();
-      this.showFeedback("Demo mode", "okay");
+      console.error(error);
     }
-
-    requestAnimationFrame((time) => this.loop(time));
   }
 
   resetRun() {
@@ -186,22 +172,18 @@ class RabbiesRave {
     this.notes = [];
     this.score = 0;
     this.confidence = RAVE_CONFIG.confidence.start;
-    this.lastSpawnAt = 0;
     this.scoreEl.textContent = "0";
     this.updateConfidence();
-    this.applySpriteFrame("up", 0);
+    this.setRabbieFrame("up", 1);
   }
 
-  async setupAudio(file) {
+  async prepareAudio(file) {
     this.audio = new Audio(file);
-    this.audio.crossOrigin = "anonymous";
     this.audio.preload = "auto";
+    this.audio.src = file;
 
     this.audioContext ||= new AudioContext();
-    if (this.audioContext.state === "suspended") {
-      await this.audioContext.resume();
-    }
-
+    if (this.audioContext.state === "suspended") await this.audioContext.resume();
     this.analyser = this.audioContext.createAnalyser();
     this.analyser.fftSize = 256;
     this.frequencyData = new Uint8Array(this.analyser.frequencyBinCount);
@@ -209,13 +191,12 @@ class RabbiesRave {
     this.sourceNode.connect(this.analyser);
     this.analyser.connect(this.audioContext.destination);
     this.audio.addEventListener("ended", () => this.endRun("Run complete", true), { once: true });
-    await this.audio.play();
   }
 
   stopAudio() {
     if (this.audio) {
       this.audio.pause();
-      this.audio.src = "";
+      this.audio.removeAttribute("src");
       this.audio.load();
     }
     if (this.sourceNode) {
@@ -227,69 +208,61 @@ class RabbiesRave {
 
   loop(now) {
     if (!this.running) return;
-
-    const amplitude = this.getAmplitude(now);
+    const amplitude = this.readAmplitude();
+    this.lastAmplitude = amplitude;
     this.maybeSpawnNote(now, amplitude);
     this.updateNotes(now);
     this.checkMisses(now);
-
-    if (!this.audio && now - this.startedAt > RAVE_CONFIG.demoModeMs) {
-      this.endRun("Demo complete", true);
-      return;
-    }
-
     requestAnimationFrame((time) => this.loop(time));
   }
 
-  getAmplitude(now) {
-    if (!this.analyser || !this.frequencyData) {
-      const beat = Math.sin((now - this.startedAt) / 170) * 0.5 + 0.5;
-      return 0.1 + beat * 0.24;
-    }
-
+  readAmplitude() {
+    if (!this.analyser || !this.frequencyData) return 0;
     this.analyser.getByteFrequencyData(this.frequencyData);
-    const average = this.frequencyData.reduce((total, value) => total + value, 0) / this.frequencyData.length;
-    return average / 255;
+    const total = this.frequencyData.reduce((sum, value) => sum + value, 0);
+    const analysed = total / this.frequencyData.length / 255;
+    const elapsed = performance.now() - this.startedAt;
+    const floor = 0.075 + (Math.sin(elapsed / 210) * 0.5 + 0.5) * 0.035;
+    return Math.max(analysed, floor);
   }
 
   maybeSpawnNote(now, amplitude) {
-    const intensity = this.getIntensity(amplitude);
-    const spawnEvery = this.lerp(RAVE_CONFIG.notes.baseSpawnMs, RAVE_CONFIG.notes.loudSpawnMs, intensity);
-    const enoughTime = now - this.lastSpawnAt > spawnEvery;
-    const peakChance = amplitude > RAVE_CONFIG.notes.quietThreshold && Math.random() < 0.76;
-
-    if (!enoughTime || !peakChance) return;
+    const intensity = this.intensityFor(amplitude);
+    const spawnMs = this.lerp(RAVE_CONFIG.notes.baseSpawnMs, RAVE_CONFIG.notes.loudSpawnMs, intensity);
+    if (now - this.lastSpawnAt < spawnMs) return;
+    if (amplitude < RAVE_CONFIG.notes.quietThreshold && Math.random() > 0.3) return;
 
     this.spawnNote(DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)], now);
     this.lastSpawnAt = now;
 
-    if (intensity > 0.82 && Math.random() < 0.28) {
+    if (intensity > 0.78 && Math.random() < 0.24) {
       window.setTimeout(() => {
         if (this.running) this.spawnNote(DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)], performance.now());
-      }, 150);
+      }, 170);
     }
   }
 
   spawnNote(direction, now) {
-    const note = document.createElement("div");
-    note.className = `falling-note falling-note--${direction}`;
-    note.textContent = this.symbolFor(direction);
-    note.dataset.direction = direction;
-    this.playfield.appendChild(note);
+    const el = document.createElement("div");
+    el.className = `falling-note falling-note--${direction}`;
+    el.textContent = SYMBOLS[direction];
+    this.playfield.appendChild(el);
     this.notes.push({
-      id: crypto.randomUUID ? crypto.randomUUID() : `${now}-${Math.random()}`,
       direction,
       targetAt: now + RAVE_CONFIG.notes.travelMs,
-      el: note,
+      el,
       hit: false,
     });
   }
 
   updateNotes(now) {
+    const fieldHeight = this.playfield.clientHeight;
+    const targetY = fieldHeight - 118;
     this.notes.forEach((note) => {
       const progress = 1 - (note.targetAt - now) / RAVE_CONFIG.notes.travelMs;
-      note.el.style.transform = `translate3d(0, ${this.lerp(-18, 76, progress)}svh, 0)`;
-      note.el.style.opacity = progress > 1.16 ? "0" : "1";
+      const y = this.lerp(-54, targetY, progress);
+      note.el.style.transform = `translate3d(0, ${y}px, 0)`;
+      note.el.style.opacity = progress > 1.14 ? "0" : "1";
     });
   }
 
@@ -297,7 +270,6 @@ class RabbiesRave {
     this.notes = this.notes.filter((note) => {
       if (note.hit) return false;
       if (now - note.targetAt <= RAVE_CONFIG.notes.missAfterMs) return true;
-
       note.el.remove();
       this.changeConfidence(RAVE_CONFIG.confidence.miss);
       this.showFeedback("Miss", "bad");
@@ -307,48 +279,38 @@ class RabbiesRave {
 
   hit(direction) {
     if (!this.running) return;
-
     this.animateRabbie(direction);
 
     const now = performance.now();
-    const candidates = this.notes
+    const windows = this.timingWindows();
+    const candidate = this.notes
       .filter((note) => note.direction === direction && !note.hit)
       .map((note) => ({ note, delta: Math.abs(now - note.targetAt) }))
-      .sort((a, b) => a.delta - b.delta);
+      .sort((a, b) => a.delta - b.delta)[0];
 
-    const best = candidates[0];
-    const window = this.getTimingWindow();
-
-    if (!best || best.delta > window.bad) {
+    if (!candidate || candidate.delta > windows.bad) {
       this.changeConfidence(RAVE_CONFIG.confidence.bad);
       this.showFeedback("Bad", "bad");
       return;
     }
 
-    best.note.hit = true;
-    best.note.el.remove();
-
-    if (best.delta <= window.perfect) {
-      this.award("Perfect", "great", RAVE_CONFIG.scoring.perfect, RAVE_CONFIG.confidence.perfect);
-    } else if (best.delta <= window.good) {
-      this.award("Good", "okay", RAVE_CONFIG.scoring.good, RAVE_CONFIG.confidence.good);
-    } else if (best.delta <= window.poor) {
-      this.award("Early/Late", "poor", RAVE_CONFIG.scoring.poor, RAVE_CONFIG.confidence.poor);
-    } else {
-      this.award("Barely", "bad", RAVE_CONFIG.scoring.bad, RAVE_CONFIG.confidence.bad);
-    }
-
+    candidate.note.hit = true;
+    candidate.note.el.remove();
     this.notes = this.notes.filter((note) => !note.hit);
+
+    if (candidate.delta <= windows.perfect) this.award("Perfect", "great", RAVE_CONFIG.scoring.perfect, RAVE_CONFIG.confidence.perfect);
+    else if (candidate.delta <= windows.good) this.award("Good", "okay", RAVE_CONFIG.scoring.good, RAVE_CONFIG.confidence.good);
+    else if (candidate.delta <= windows.poor) this.award("Early/Late", "poor", RAVE_CONFIG.scoring.poor, RAVE_CONFIG.confidence.poor);
+    else this.award("Barely", "bad", RAVE_CONFIG.scoring.bad, RAVE_CONFIG.confidence.bad);
   }
 
-  getTimingWindow() {
-    const amplitude = this.getAmplitude(performance.now());
-    const tighten = this.getIntensity(amplitude) * RAVE_CONFIG.timing.loudTightenMs;
+  timingWindows() {
+    const tighten = this.intensityFor(this.lastAmplitude) * RAVE_CONFIG.timing.loudTightenMs;
     return {
       perfect: RAVE_CONFIG.timing.perfectMs - tighten,
       good: RAVE_CONFIG.timing.goodMs - tighten,
       poor: RAVE_CONFIG.timing.poorMs - tighten,
-      bad: RAVE_CONFIG.timing.poorMs + 55 - tighten,
+      bad: RAVE_CONFIG.timing.poorMs + 60 - tighten,
     };
   }
 
@@ -362,9 +324,7 @@ class RabbiesRave {
   changeConfidence(amount) {
     this.confidence = Math.max(0, Math.min(100, this.confidence + amount));
     this.updateConfidence();
-    if (this.confidence === 0) {
-      this.endRun("Confidence gone", false);
-    }
+    if (this.confidence === 0) this.endRun("Confidence gone", false);
   }
 
   updateConfidence() {
@@ -380,37 +340,24 @@ class RabbiesRave {
   }
 
   animateRabbie(direction) {
-    const frames = [0, 1, 2, 0];
-    frames.forEach((frame, index) => {
-      window.setTimeout(() => this.applySpriteFrame(direction, frame), index * RAVE_CONFIG.sprite.frameDurationMs);
+    [1, 2, 3, 1].forEach((frame, index) => {
+      window.setTimeout(() => this.setRabbieFrame(direction, frame), index * RAVE_CONFIG.frames.frameMs);
     });
   }
 
-  applySpriteFrame(direction, frame) {
-    const sprite = RAVE_CONFIG.sprite;
-    const scale = sprite.displayScale;
-    const centerX = sprite.frameCentersX[frame] * scale;
-    const centerY = sprite.rowCentersY[sprite.rowByDirection[direction]] * scale;
-    const x = -(centerX - sprite.cropWidth / 2);
-    const y = -(centerY - sprite.cropHeight / 2);
-
-    this.rabbie.style.backgroundImage = `url("${sprite.path}")`;
-    this.rabbie.style.backgroundSize = `${sprite.sheetWidth * scale}px ${sprite.sheetHeight * scale}px`;
-    this.rabbie.style.backgroundPosition = `${x}px ${y}px`;
+  setRabbieFrame(direction, frame) {
+    this.rabbie.src = `${RAVE_CONFIG.frames.basePath}/${direction}-${frame}.png`;
   }
 
   endRun(kicker, completed) {
     if (!this.running) return;
-
     this.running = false;
     this.stopAudio();
     this.notes.forEach((note) => note.el.remove());
     this.notes = [];
     this.resultKicker.textContent = kicker;
     this.finalScoreEl.textContent = String(this.score);
-    this.resultCopy.textContent = completed
-      ? "Rabbie finished with poise, dignity, and excellent footwork."
-      : "Rabbie has left the floor, but the score still counts.";
+    this.resultCopy.textContent = completed ? "Rabbie finished with poise and excellent footwork." : "Rabbie has left the floor, but the score still counts.";
     this.showView("result");
   }
 
@@ -422,7 +369,6 @@ class RabbiesRave {
       score: this.score,
       date: new Date().toISOString(),
     });
-
     localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(scores.sort((a, b) => b.score - a.score).slice(0, 25)));
     this.renderLeaderboard();
   }
@@ -433,30 +379,12 @@ class RabbiesRave {
 
   renderLeaderboard() {
     const scores = this.getScores();
-    if (!scores.length) {
-      this.leaderboard.innerHTML = "<li>No scores yet. Rabbie is waiting.</li>";
-      return;
-    }
-
-    this.leaderboard.innerHTML = scores
-      .sort((a, b) => b.score - a.score)
-      .map(
-        (score) => `
-          <li>
-            <strong>${score.player}</strong>
-            <span>${score.song}</span>
-            <em>${score.score}</em>
-          </li>
-        `,
-      )
-      .join("");
+    this.leaderboard.innerHTML = scores.length
+      ? scores.sort((a, b) => b.score - a.score).map((score) => `<li><strong>${score.player}</strong><span>${score.song}</span><em>${score.score}</em></li>`).join("")
+      : "<li>No scores yet. Rabbie is waiting.</li>";
   }
 
-  symbolFor(direction) {
-    return { up: "↑", down: "↓", left: "←", right: "→" }[direction];
-  }
-
-  getIntensity(amplitude) {
+  intensityFor(amplitude) {
     const range = RAVE_CONFIG.notes.loudThreshold - RAVE_CONFIG.notes.quietThreshold;
     return Math.max(0, Math.min(1, (amplitude - RAVE_CONFIG.notes.quietThreshold) / range));
   }
@@ -468,7 +396,5 @@ class RabbiesRave {
 
 document.addEventListener("DOMContentLoaded", () => {
   const root = document.querySelector("[data-rave]");
-  if (root) {
-    window.rabbiesRave = new RabbiesRave(root);
-  }
+  if (root) window.rabbiesRave = new RabbiesRave(root);
 });

@@ -38,9 +38,14 @@ The South American Fund PayPal flow is currently mocked. Gift purchases disappea
 
 ## Rabbie's Rave
 
-Song paths live in `songs.js`. The current config points at the `.m4a` files in `RabbiesRave/`.
+Song paths live in `songs.js`. The current config points at clean `.m4a` copies in `songs/`.
 You can move or rename the files later as long as each `file` path is updated.
 
-The uploaded Rabbie sprite sheet has been copied to `assets/rabbie-sprite.png`. Sprite crop,
-timing windows, confidence changes, scoring, and live note-generation values are all at the top of
-`game.js`.
+The uploaded Rabbie sprite sheet has been copied to `assets/rabbie-sprite.png`, and the live game
+uses isolated frame files in `assets/rabbie-frames/`. Timing windows, confidence changes, scoring,
+and live note-generation values are all at the top of `game.js`.
+
+## Pages
+
+The site uses separate static pages: `index.html`, `story.html`, `schedule.html`, `travel.html`,
+`stay.html`, `faq.html`, `photos.html`, `rsvp.html`, `registry.html`, and `rabbies-rave.html`.

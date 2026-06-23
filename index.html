@@ -4,10 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Isabel & Jesse | 21 January 2028</title>
-    <meta
-      name="description"
-      content="The wedding website for Isabel Hoggard and Jesse Livermore at Sunnyside Estate, Mornington Peninsula."
-    />
+    <meta name="description" content="The wedding website for Isabel Hoggard and Jesse Livermore." />
     <meta name="theme-color" content="#f3eadc" />
     <meta name="apple-mobile-web-app-title" content="Isabel & Jesse" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,15 +14,10 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
     <script src="script.js" defer></script>
-    <script src="songs.js" defer></script>
-    <script src="game.js" defer></script>
   </head>
   <body>
     <div class="gate" id="gate" aria-live="polite">
@@ -41,355 +33,23 @@
         <p class="gate__error" id="gateError"></p>
       </div>
     </div>
-
     <header class="site-header">
-      <a class="brand" href="#home" aria-label="Isabel and Jesse home">
-        <span>I</span>
-        <span>&</span>
-        <span>J</span>
-      </a>
-      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-        <i data-lucide="menu"></i>
-      </button>
-      <nav class="nav" aria-label="Single page navigation">
-        <a href="#home">Home</a>
-        <a href="#story">Our Story</a>
-        <a href="#schedule">Schedule</a>
-        <a href="#travel">Travel</a>
-        <a href="#stay">Stay</a>
-        <a href="#faq">FAQ</a>
-        <a href="#photos">Photos</a>
-        <a href="#rsvp">RSVP</a>
-        <a href="#registry">Registry</a>
-        <a href="#game">Rabbie's Rave</a>
+      <a class="brand" href="index.html" aria-label="Isabel and Jesse home"><span>I</span><span>&</span><span>J</span></a>
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu"></i></button>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="index.html">Home</a><a href="story.html">Our Story</a><a href="schedule.html">Schedule</a><a href="travel.html">Travel</a><a href="stay.html">Stay</a><a href="faq.html">FAQ</a><a href="photos.html">Photos</a><a href="rsvp.html">RSVP</a><a href="registry.html">Registry</a><a href="rabbies-rave.html">Rabbie's Rave</a>
       </nav>
     </header>
-
     <main>
-      <section class="hero panel" id="home">
+      <section class="hero panel">
         <div class="hero__image" role="img" aria-label="Black and white portrait of Isabel and Jesse"></div>
         <div class="hero__content">
           <p class="eyebrow">Friday, 21 January 2028</p>
           <h1>Isabel & Jesse</h1>
-          <p class="lede">
-            A summer wedding at Sunnyside Estate, Mornington Peninsula. Ceremony, cocktails, dinner,
-            dancing, and one gently unhinged dance game to follow.
-          </p>
+          <p class="lede">A summer wedding at Sunnyside Estate, Mornington Peninsula. Ceremony, cocktails, dinner, dancing, and Rabbie's Rave.</p>
           <div class="hero__actions">
-            <a class="button button--dark" href="#rsvp">RSVP</a>
-            <a class="button button--light" href="#schedule">View Schedule</a>
-          </div>
-        </div>
-      </section>
-
-      <section class="split panel" id="story">
-        <div>
-          <p class="eyebrow">Our Story</p>
-          <h2>A good thing, made official.</h2>
-        </div>
-        <div class="copy">
-          <p>
-            Isabel Hoggard and Jesse Livermore are gathering their favourite people for a long,
-            golden day by the Peninsula. Expect elegant food, warm weather, black-tie-ish energy,
-            and the kind of dance floor that begins politely before becoming history.
-          </p>
-          <p>
-            More story details can be added here once the couple are ready to reveal the lore.
-          </p>
-        </div>
-      </section>
-
-      <section class="panel" id="schedule">
-        <div class="section-heading">
-          <p class="eyebrow">Schedule</p>
-          <h2>The Day</h2>
-          <p>Times are placeholders for now and can be sharpened once the run sheet lands.</p>
-        </div>
-        <div class="timeline">
-          <article>
-            <time>2:30 PM</time>
-            <h3>Cocktail Arrival</h3>
-            <p>Arrive, settle in, and make your first excellent decision of the day.</p>
-          </article>
-          <article>
-            <time>3:30 PM</time>
-            <h3>Ceremony</h3>
-            <p>Isabel and Jesse make it official at Sunnyside Estate.</p>
-          </article>
-          <article>
-            <time>4:15 PM</time>
-            <h3>Cocktail Hour</h3>
-            <p>Drinks, canapes, photographs, and the early stages of dance-floor confidence.</p>
-          </article>
-          <article>
-            <time>6:00 PM</time>
-            <h3>Dinner</h3>
-            <p>Long tables, beautiful food, and speeches with strict-ish time limits.</p>
-          </article>
-          <article>
-            <time>8:00 PM</time>
-            <h3>Dancing</h3>
-            <p>Formal elegance gives way to movement. Hydrate accordingly.</p>
-          </article>
-          <article>
-            <time>Next Day</time>
-            <h3>Recovery</h3>
-            <p>A softer landing for anyone still in the area. Details to come.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="split panel travel" id="travel">
-        <div>
-          <p class="eyebrow">Travel</p>
-          <h2>Sunnyside Estate</h2>
-          <p>1 Sunnyside Road, Mount Eliza VIC 3930, Mornington Peninsula.</p>
-        </div>
-        <div class="travel__card">
-          <div class="map-block">
-            <i data-lucide="map-pinned"></i>
-            <span>Mornington Peninsula</span>
-          </div>
-          <p>
-            Sunnyside Estate sits among gardens and coastal Peninsula scenery. Please allow extra
-            time for summer traffic and transport between towns.
-          </p>
-          <div class="button-row">
-            <a class="button button--dark" href="https://www.google.com/maps/search/?api=1&query=1%20Sunnyside%20Road%2C%20Mount%20Eliza%20VIC%203930" target="_blank" rel="noreferrer">
-              Google Maps
-            </a>
-            <a class="button button--light" href="https://maps.apple.com/?q=1%20Sunnyside%20Road%2C%20Mount%20Eliza%20VIC%203930" target="_blank" rel="noreferrer">
-              Apple Maps
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="stay">
-        <div class="section-heading">
-          <p class="eyebrow">Stay</p>
-          <h2>Nearby Stays</h2>
-          <p>Approximate distances from Sunnyside Estate. Book early: January on the Peninsula moves quickly.</p>
-        </div>
-        <div class="stay-grid">
-          <article>
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=80" alt="Luxury hotel bedroom" />
-            <div>
-              <span>Approx. 7 km</span>
-              <h3>The Sands by Nightcap Plus</h3>
-              <p>Modern, easy, and close to Frankston for guests who want a practical base with a polished finish.</p>
-            </div>
-          </article>
-          <article>
-            <img src="https://images.unsplash.com/photo-1602002418082-dd4c1f0b57b6?auto=format&fit=crop&w=900&q=80" alt="Coastal resort pool" />
-            <div>
-              <span>Approx. 12 km</span>
-              <h3>Brooklands of Mornington</h3>
-              <p>A relaxed Mornington option with space to breathe, good access to cafes, and short taxi rides.</p>
-            </div>
-          </article>
-          <article>
-            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=900&q=80" alt="Elegant resort exterior" />
-            <div>
-              <span>Approx. 31 km</span>
-              <h3>Jackalope Hotel</h3>
-              <p>The splurge choice: dramatic, vineyard-facing, and properly memorable for a wedding weekend.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="panel" id="faq">
-        <div class="section-heading">
-          <p class="eyebrow">FAQ</p>
-          <h2>Useful Things</h2>
-        </div>
-        <div class="faq-list">
-          <details open>
-            <summary>What should I wear?</summary>
-            <p>Elegant summer wedding attire. No pinks requested in the site palette, but your outfit is your business.</p>
-          </details>
-          <details>
-            <summary>Can I bring children?</summary>
-            <p>Details to be confirmed by Isabel and Jesse.</p>
-          </details>
-          <details>
-            <summary>Will transport be arranged?</summary>
-            <p>Transport details are coming. For now, plan for taxis, rideshare, or pre-booked transfers.</p>
-          </details>
-          <details>
-            <summary>When should I RSVP?</summary>
-            <p>RSVP deadline to be added once invites are finalised.</p>
-          </details>
-        </div>
-      </section>
-
-      <section class="photos panel" id="photos">
-        <div class="section-heading">
-          <p class="eyebrow">Photos</p>
-          <h2>Black & White</h2>
-          <p>A rolling gallery for now, repeating the first photos until the full set arrives.</p>
-        </div>
-        <div class="photo-marquee" aria-label="Animated photo gallery">
-          <div class="photo-track">
-            <img src="assets/isabel-jesse-1.jpeg" alt="Isabel and Jesse smiling together" />
-            <img src="assets/isabel-jesse-2.jpeg" alt="Isabel and Jesse in aprons" />
-            <img src="assets/isabel-jesse-3.jpeg" alt="Isabel showing her ring" />
-            <img src="assets/isabel-jesse-1.jpeg" alt="" />
-            <img src="assets/isabel-jesse-2.jpeg" alt="" />
-            <img src="assets/isabel-jesse-3.jpeg" alt="" />
-          </div>
-        </div>
-      </section>
-
-      <section class="panel" id="rsvp">
-        <div class="section-heading">
-          <p class="eyebrow">RSVP</p>
-          <h2>Say Yes, No, Or Complicated</h2>
-          <p>Submissions are stored locally for now, with a Google Sheets endpoint ready in the code.</p>
-        </div>
-        <form class="rsvp-form" id="rsvpForm">
-          <label>
-            Your name
-            <input name="name" required placeholder="Full name" />
-          </label>
-          <label>
-            Email
-            <input name="email" type="email" required placeholder="you@example.com" />
-          </label>
-          <label>
-            Plus-one name
-            <input name="plusOne" placeholder="If applicable" />
-          </label>
-          <fieldset>
-            <legend>Events</legend>
-            <label><input type="checkbox" name="events" value="ceremony" /> Ceremony</label>
-            <label><input type="checkbox" name="events" value="cocktail-hour" /> Cocktail hour</label>
-            <label><input type="checkbox" name="events" value="dinner" /> Dinner</label>
-            <label><input type="checkbox" name="events" value="dancing" /> Dancing</label>
-            <label><input type="checkbox" name="events" value="recovery" /> Recovery</label>
-          </fieldset>
-          <label>
-            Dietary requirements
-            <textarea name="dietary" rows="3" placeholder="Tell us anything important"></textarea>
-          </label>
-          <label>
-            Song request
-            <input name="song" placeholder="The floor needs..." />
-          </label>
-          <button class="button button--dark" type="submit">Send RSVP</button>
-          <p class="form-status" id="rsvpStatus"></p>
-        </form>
-      </section>
-
-      <section class="panel" id="registry">
-        <div class="section-heading">
-          <p class="eyebrow">Registry</p>
-          <h2>Gifts & The South American Fund</h2>
-          <p>PayPal and shopping links are mocked for now. Purchased gifts disappear on this device.</p>
-        </div>
-        <article class="fund">
-          <div>
-            <p class="eyebrow">Featured</p>
-            <h3>South American Fund</h3>
-            <p>
-              Help Isabel and Jesse put a little money toward a future South American adventure:
-              food, flights, hotels, and questionable dance moves across another continent.
-            </p>
-          </div>
-          <button class="button button--dark" id="fakePaypal" type="button">Fake PayPal Gift</button>
-        </article>
-        <div class="registry-grid" id="registryGrid"></div>
-      </section>
-
-      <section class="rave panel" id="game">
-        <div class="rave-shell" data-rave>
-          <div class="rave-view rave-view--active" data-view="menu">
-            <p class="eyebrow">Boutique rhythm mischief</p>
-            <h2>Rabbie's Rave</h2>
-            <div class="rabbie-preview" aria-hidden="true"></div>
-            <div class="rave-actions">
-              <button class="button button--dark" type="button" data-action="show-songs">Play</button>
-              <button class="button button--light" type="button" data-action="show-leaderboard">Leaderboard</button>
-            </div>
-          </div>
-
-          <div class="rave-view" data-view="songs">
-            <div class="rave-topline">
-              <button class="icon-button" type="button" data-action="show-menu" aria-label="Back to menu">
-                <i data-lucide="arrow-left"></i>
-              </button>
-              <p class="eyebrow">Choose your chaos</p>
-            </div>
-            <h2>Song Select</h2>
-            <div class="song-list" data-song-list></div>
-          </div>
-
-          <div class="rave-view" data-view="leaderboard">
-            <div class="rave-topline">
-              <button class="icon-button" type="button" data-action="show-menu" aria-label="Back to menu">
-                <i data-lucide="arrow-left"></i>
-              </button>
-              <p class="eyebrow">Local legends</p>
-            </div>
-            <h2>Leaderboard</h2>
-            <ol class="leaderboard-list" data-leaderboard></ol>
-          </div>
-
-          <div class="rave-view" data-view="game">
-            <div class="rave-hud">
-              <div>
-                <span>Song</span>
-                <strong data-current-song>Rabbie's Rave</strong>
-              </div>
-              <div>
-                <span>Score</span>
-                <strong data-score>0</strong>
-              </div>
-            </div>
-            <div class="confidence">
-              <span>Confidence</span>
-              <div class="confidence__track">
-                <div class="confidence__fill" data-confidence></div>
-              </div>
-            </div>
-
-            <div class="playfield" data-playfield>
-              <div class="lane-labels" aria-hidden="true">
-                <span>Up</span>
-                <span>Down</span>
-                <span>Left</span>
-                <span>Right</span>
-              </div>
-              <div class="timing-line" aria-hidden="true"></div>
-              <div class="rabbie" data-rabbie aria-label="Rabbie"></div>
-              <div class="hit-feedback" data-feedback></div>
-            </div>
-
-            <div class="rave-controls" aria-label="Rhythm controls">
-              <button type="button" data-direction="up">Up</button>
-              <button type="button" data-direction="down">Down</button>
-              <button type="button" data-direction="left">Left</button>
-              <button type="button" data-direction="right">Right</button>
-            </div>
-            <button class="button button--light quit-button" type="button" data-action="end-run">Quit</button>
-          </div>
-
-          <div class="rave-view" data-view="result">
-            <p class="eyebrow" data-result-kicker>Run complete</p>
-            <h2 data-final-score>0</h2>
-            <p data-result-copy>Rabbie awaits judgment.</p>
-            <form class="score-form" data-score-form>
-              <label>
-                Your name
-                <input name="player" maxlength="24" required placeholder="Wedding legend" />
-              </label>
-              <button class="button button--dark" type="submit">Save Score</button>
-            </form>
-            <div class="rave-actions">
-              <button class="button button--light" type="button" data-action="show-songs">Play Again</button>
-              <button class="button button--light" type="button" data-action="show-leaderboard">Leaderboard</button>
-            </div>
+            <a class="button button--dark" href="rsvp.html">RSVP</a>
+            <a class="button button--light" href="schedule.html">View Schedule</a>
           </div>
         </div>
       </section>
