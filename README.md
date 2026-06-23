@@ -38,7 +38,8 @@ The South American Fund PayPal flow is currently mocked. Gift purchases disappea
 
 ## Rabbie's Rave
 
-Song paths live in `songs.js`. Put audio files in the `songs/` folder or change each `file` path.
+Song paths live in `songs.js`. The current config points at the `.m4a` files in `RabbiesRave/`.
+You can move or rename the files later as long as each `file` path is updated.
 
 The uploaded Rabbie sprite sheet has been copied to `assets/rabbie-sprite.png`. Sprite crop,
 timing windows, confidence changes, scoring, and live note-generation values are all at the top of
