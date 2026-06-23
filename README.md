@@ -42,7 +42,7 @@ Song paths live in `songs.js`. The current config points at clean `.m4a` copies 
 You can move or rename the files later as long as each `file` path is updated.
 
 The uploaded Rabbie sprite sheet has been copied to `assets/rabbie-sprite.png`, and the live game
-uses isolated frame files in `assets/rabbie-frames/`. Timing windows, confidence changes, scoring,
+uses trimmed frame files in `assets/sprites/`. Timing windows, confidence changes, scoring,
 and live note-generation values are all at the top of `game.js`.
 
 ## Pages

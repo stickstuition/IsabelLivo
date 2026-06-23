@@ -1,30 +1,36 @@
 const RAVE_CONFIG = {
   frames: {
-    basePath: "assets/rabbie-frames",
-    defaultDirection: "up",
-    frameMs: 85,
+    basePath: "assets/sprites",
+    idle: "sprite_0000.png",
+    movementByDirection: {
+      up: "sprite_0001.png",
+      down: "sprite_0011.png",
+      left: "sprite_0004.png",
+      right: "sprite_0005.png",
+    },
+    frameMs: 140,
   },
   notes: {
-    travelMs: 1750,
-    baseSpawnMs: 720,
-    loudSpawnMs: 330,
+    travelMs: 3400,
+    baseSpawnMs: 1450,
+    loudSpawnMs: 900,
     quietThreshold: 0.06,
     loudThreshold: 0.24,
-    missAfterMs: 210,
+    missAfterMs: 520,
   },
   timing: {
-    perfectMs: 70,
-    goodMs: 125,
-    poorMs: 190,
-    loudTightenMs: 20,
+    perfectMs: 150,
+    goodMs: 290,
+    poorMs: 460,
+    loudTightenMs: 8,
   },
   confidence: {
     start: 100,
-    perfect: 2,
-    good: 1,
-    poor: -6,
-    bad: -12,
-    miss: -15,
+    perfect: 3,
+    good: 2,
+    poor: -2,
+    bad: -5,
+    miss: -7,
   },
   scoring: {
     perfect: 300,
@@ -35,7 +41,7 @@ const RAVE_CONFIG = {
 };
 
 const DIRECTIONS = ["up", "down", "left", "right"];
-const SYMBOLS = { up: "↑", down: "↓", left: "←", right: "→" };
+const SYMBOLS = { up: "\u2191", down: "\u2193", left: "\u2190", right: "\u2192" };
 const LEADERBOARD_KEY = "rabbiesRaveLeaderboard";
 
 class RabbiesRave {
@@ -73,7 +79,7 @@ class RabbiesRave {
 
     this.renderSongs();
     this.renderLeaderboard();
-    this.setRabbieFrame("up", 1);
+    this.setRabbieIdle();
     this.bindEvents();
   }
 
@@ -174,7 +180,7 @@ class RabbiesRave {
     this.confidence = RAVE_CONFIG.confidence.start;
     this.scoreEl.textContent = "0";
     this.updateConfidence();
-    this.setRabbieFrame("up", 1);
+    this.setRabbieIdle();
   }
 
   async prepareAudio(file) {
@@ -310,7 +316,7 @@ class RabbiesRave {
       perfect: RAVE_CONFIG.timing.perfectMs - tighten,
       good: RAVE_CONFIG.timing.goodMs - tighten,
       poor: RAVE_CONFIG.timing.poorMs - tighten,
-      bad: RAVE_CONFIG.timing.poorMs + 60 - tighten,
+      bad: RAVE_CONFIG.timing.poorMs + 160 - tighten,
     };
   }
 
@@ -340,13 +346,21 @@ class RabbiesRave {
   }
 
   animateRabbie(direction) {
-    [1, 2, 3, 1].forEach((frame, index) => {
-      window.setTimeout(() => this.setRabbieFrame(direction, frame), index * RAVE_CONFIG.frames.frameMs);
+    [false, true, false].forEach((isMoveFrame, index) => {
+      window.setTimeout(() => {
+        if (isMoveFrame) this.setRabbieMove(direction);
+        else this.setRabbieIdle();
+      }, index * RAVE_CONFIG.frames.frameMs);
     });
   }
 
-  setRabbieFrame(direction, frame) {
-    this.rabbie.src = `${RAVE_CONFIG.frames.basePath}/${direction}-${frame}.png`;
+  setRabbieIdle() {
+    this.rabbie.src = `${RAVE_CONFIG.frames.basePath}/${RAVE_CONFIG.frames.idle}`;
+  }
+
+  setRabbieMove(direction) {
+    const frame = RAVE_CONFIG.frames.movementByDirection[direction] || RAVE_CONFIG.frames.idle;
+    this.rabbie.src = `${RAVE_CONFIG.frames.basePath}/${frame}`;
   }
 
   endRun(kicker, completed) {
